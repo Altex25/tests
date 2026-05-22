@@ -1,3 +1,5 @@
 package org.example;
 
-public interface Ide {}
+public interface Ide {
+    int getRoll();
+}
