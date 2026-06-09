@@ -1,0 +1,8 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+exercice_7,com.example.model,Commande,0,27,0,0,0,10,0,5,0,5
+exercice_7,com.example.model,RecuCommande,10,27,0,0,1,10,1,5,1,5
+exercice_7,com.example.model,Produit,45,24,6,0,9,9,7,4,4,4
+exercice_7,com.example.model,ProfilClient,0,35,0,0,0,8,0,3,0,3
+exercice_7,com.example.exception,ProduitInconnuException,0,4,0,0,0,2,0,1,0,1
+exercice_7,com.example.exception,StockInsuffisantException,0,4,0,0,0,2,0,1,0,1
+exercice_7,com.example.service,CommandeService,0,83,0,2,0,18,0,5,0,4
