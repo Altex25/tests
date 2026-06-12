@@ -43,8 +43,6 @@ public class AccountSteps {
         error = null;
     }
 
-    // ----- Account creation -----
-
     @Given("no account exists with username {string}")
     public void noAccountExistsWithUsername(String username) {
         when(userRepository.existsByUsername(username)).thenReturn(false);
@@ -76,7 +74,6 @@ public class AccountSteps {
         assertEquals(username, registration.getUsername());
         assertFalse(registration.getMessage().isBlank(), "The confirmation message should not be blank");
 
-        // The service must persist the new account through the repository.
         ArgumentCaptor<User> savedUser = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(savedUser.capture());
         assertEquals(username, savedUser.getValue().getUsername());
@@ -89,8 +86,6 @@ public class AccountSteps {
         assertInstanceOf(DuplicateAccountException.class, error);
         assertNull(registration);
     }
-
-    // ----- Login -----
 
     @Given("a registered user {string} with password {string}")
     public void aRegisteredUser(String username, String password) {

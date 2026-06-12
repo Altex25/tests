@@ -1,8 +1,10 @@
 package org.example.exercice_11.dto;
 
+import jakarta.validation.constraints.NotNull;
 import org.example.exercice_11.model.Status;
 
 public class UpdateStatusRequest {
+    @NotNull
     private Status status;
 
     public UpdateStatusRequest() {

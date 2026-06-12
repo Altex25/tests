@@ -1,9 +1,16 @@
 package org.example.exercice_11.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.example.exercice_11.model.Priority;
 
 public class CreateTicketRequest {
+    @NotBlank
+    @Size(min = 3, message = "The title must contain at least 3 characters")
     private String title;
+
+    @NotNull
     private Priority priority;
 
     public CreateTicketRequest() {

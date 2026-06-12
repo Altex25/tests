@@ -14,10 +14,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * Integration test: loads the full Spring context and exercises a simple journey
- * through the REST API (create -> retrieve -> change status) on the in-memory store.
- */
 @SpringBootTest
 @AutoConfigureMockMvc
 class TicketApiIntegrationTest {

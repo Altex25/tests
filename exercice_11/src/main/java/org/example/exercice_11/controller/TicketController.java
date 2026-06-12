@@ -1,9 +1,11 @@
 package org.example.exercice_11.controller;
 
+import jakarta.validation.Valid;
 import org.example.exercice_11.dto.CreateTicketRequest;
 import org.example.exercice_11.dto.UpdateStatusRequest;
 import org.example.exercice_11.model.Ticket;
 import org.example.exercice_11.service.TicketService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -25,22 +27,24 @@ public class TicketController {
     }
 
     @PostMapping
-    public ResponseEntity<Ticket> create(@RequestBody CreateTicketRequest request) {
-        throw new UnsupportedOperationException("TODO: implement TicketController.create");
+    public ResponseEntity<Ticket> create(@Valid @RequestBody CreateTicketRequest request) {
+        Ticket created = ticketService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Ticket> getById(@PathVariable Long id) {
-        throw new UnsupportedOperationException("TODO: implement TicketController.getById");
+        return ResponseEntity.ok(ticketService.getById(id));
     }
 
     @GetMapping
     public ResponseEntity<List<Ticket>> getAll() {
-        throw new UnsupportedOperationException("TODO: implement TicketController.getAll");
+        return ResponseEntity.ok(ticketService.getAll());
     }
 
     @PatchMapping("/{id}/status")
-    public ResponseEntity<Ticket> changeStatus(@PathVariable Long id, @RequestBody UpdateStatusRequest request) {
-        throw new UnsupportedOperationException("TODO: implement TicketController.changeStatus");
+    public ResponseEntity<Ticket> changeStatus(@PathVariable Long id,
+                                               @Valid @RequestBody UpdateStatusRequest request) {
+        return ResponseEntity.ok(ticketService.changeStatus(id, request.getStatus()));
     }
 }
