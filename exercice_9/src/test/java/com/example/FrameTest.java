@@ -162,4 +162,17 @@ class FrameTest {
 
         assertFalse(fourthRoll);
     }
+
+    @Test
+    void shouldIncreaseScoreWhenThirdRollIsMadeAfterDoubleStrikeInLastFrame() {
+        when(generateur.randomPin(anyInt())).thenReturn(10, 10, 3);
+        Frame frame = new Frame(generateur, true);
+
+        frame.makeRoll();
+        frame.makeRoll();
+        boolean thirdRoll = frame.makeRoll();
+
+        assertTrue(thirdRoll);
+        assertEquals(23, frame.getScore());
+    }
 }

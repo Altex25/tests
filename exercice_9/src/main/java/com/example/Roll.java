@@ -9,6 +9,6 @@ public class Roll {
     }
 
     public int getPins() {
-        return 0;
+        return pins;
     }
 }
