@@ -4,7 +4,6 @@ import com.jayway.jsonpath.JsonPath;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -16,13 +15,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TicketSteps {
-    @Autowired
-    private MockMvc mockMvc;
+    private final MockMvc mockMvc;
 
     private String title;
     private String priority;
     private Long currentTicketId;
     private ResultActions lastAction;
+
+    public TicketSteps(MockMvc mockMvc) {
+        this.mockMvc = mockMvc;
+    }
 
     @Given("a valid ticket with title {string} and priority {string}")
     public void aValidTicketWithTitleAndPriority(String title, String priority) {
