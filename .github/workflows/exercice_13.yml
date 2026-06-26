@@ -1,0 +1,43 @@
+name: exercice_13 CI
+
+on:
+  push:
+    paths:
+      - 'exercice_13/**'
+      - '.github/workflows/exercice_13.yml'
+  pull_request:
+    paths:
+      - 'exercice_13/**'
+      - '.github/workflows/exercice_13.yml'
+
+defaults:
+  run:
+    working-directory: exercice_13
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Run tests and generate reports
+        run: ./mvnw --batch-mode test
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            exercice_13/target/surefire-reports
+            exercice_13/target/site/jacoco
+            exercice_13/target/cucumber-reports
