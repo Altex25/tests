@@ -34,4 +34,8 @@ public class InMemoryAccountRepository implements AccountRepository {
     public boolean existsByNumber(String number) {
         return accounts.containsKey(number);
     }
+
+    public void clear() {
+        accounts.clear();
+    }
 }
