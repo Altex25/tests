@@ -51,11 +51,16 @@ jobs:
             exercice_13/target/site/jacoco
             exercice_13/target/cucumber-reports
 
+      - name: Generate HTML surefire report
+        if: always()
+        run: ./mvnw --batch-mode surefire-report:report-only
+
       - name: Assemble Pages site
         run: |
-          mkdir -p site/jacoco site/cucumber
+          mkdir -p site/jacoco site/cucumber site/surefire
           cp -r target/site/jacoco/. site/jacoco/
           cp target/cucumber-reports/cucumber.html site/cucumber/index.html
+          cp target/reports/surefire.html site/surefire/index.html
           cat > site/index.html <<'EOF'
           <!DOCTYPE html>
           <html lang="en">
@@ -77,6 +82,7 @@ jobs:
             <ul>
               <li><a href="./jacoco/index.html">JaCoCo coverage report</a></li>
               <li><a href="./cucumber/index.html">Cucumber BDD report</a></li>
+              <li><a href="./surefire/index.html">Surefire unit test report</a></li>
             </ul>
           </body>
           </html>
