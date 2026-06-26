@@ -1,0 +1,138 @@
+name: CI and reports
+
+on:
+  push:
+    paths:
+      - 'exercice_11/**'
+      - 'exercice_12/**'
+      - 'exercice_13/**'
+      - '.github/workflows/reports.yml'
+  pull_request:
+    paths:
+      - 'exercice_11/**'
+      - 'exercice_12/**'
+      - 'exercice_13/**'
+      - '.github/workflows/reports.yml'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Build exercice_11
+        working-directory: exercice_11
+        run: |
+          ./mvnw --batch-mode test
+          ./mvnw --batch-mode surefire-report:report-only
+
+      - name: Build exercice_12
+        working-directory: exercice_12
+        run: |
+          ./mvnw --batch-mode verify
+          ./mvnw --batch-mode surefire-report:report-only
+
+      - name: Build exercice_13
+        working-directory: exercice_13
+        run: |
+          ./mvnw --batch-mode test
+          ./mvnw --batch-mode surefire-report:report-only
+
+      - name: Upload raw reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            exercice_11/target/surefire-reports
+            exercice_11/target/site/jacoco
+            exercice_11/target/cucumber-report.html
+            exercice_12/target/surefire-reports
+            exercice_12/target/site/jacoco
+            exercice_13/target/surefire-reports
+            exercice_13/target/site/jacoco
+            exercice_13/target/cucumber-reports
+
+      - name: Assemble combined Pages site
+        run: |
+          subindex () {
+            local dir="$1"; local title="$2"; local cucumber="$3"
+            {
+              echo '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
+              echo '<meta name="viewport" content="width=device-width, initial-scale=1">'
+              echo "<title>$title</title>"
+              echo '<style>body{font-family:system-ui,sans-serif;max-width:640px;margin:4rem auto;padding:0 1rem}h1{font-size:1.6rem}a.report{display:block;padding:1rem;border:1px solid #ddd;border-radius:8px;margin:.5rem 0;text-decoration:none;color:#0366d6}a.report:hover{background:#f6f8fa}</style></head><body>'
+              echo "<h1>$title</h1>"
+              echo '<p><a href="../">&larr; All exercises</a></p>'
+              echo '<a class="report" href="./jacoco/index.html">JaCoCo coverage report</a>'
+              echo '<a class="report" href="./surefire/index.html">Surefire unit test report</a>'
+              [ "$cucumber" = "yes" ] && echo '<a class="report" href="./cucumber/index.html">Cucumber BDD report</a>'
+              echo '</body></html>'
+            } > "site/$dir/index.html"
+          }
+
+          mkdir -p site/exercice_11/jacoco site/exercice_11/surefire site/exercice_11/cucumber
+          cp -r exercice_11/target/site/jacoco/. site/exercice_11/jacoco/
+          cp exercice_11/target/reports/surefire.html site/exercice_11/surefire/index.html
+          cp exercice_11/target/cucumber-report.html site/exercice_11/cucumber/index.html
+          subindex exercice_11 "exercice_11 - Test reports" yes
+
+          mkdir -p site/exercice_12/jacoco site/exercice_12/surefire
+          cp -r exercice_12/target/site/jacoco/. site/exercice_12/jacoco/
+          cp exercice_12/target/reports/surefire.html site/exercice_12/surefire/index.html
+          subindex exercice_12 "exercice_12 - Test reports" no
+
+          mkdir -p site/exercice_13/jacoco site/exercice_13/surefire site/exercice_13/cucumber
+          cp -r exercice_13/target/site/jacoco/. site/exercice_13/jacoco/
+          cp exercice_13/target/reports/surefire.html site/exercice_13/surefire/index.html
+          cp exercice_13/target/cucumber-reports/cucumber.html site/exercice_13/cucumber/index.html
+          subindex exercice_13 "exercice_13 - Test reports" yes
+
+          {
+            echo '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
+            echo '<meta name="viewport" content="width=device-width, initial-scale=1">'
+            echo '<title>Test reports</title>'
+            echo '<style>body{font-family:system-ui,sans-serif;max-width:640px;margin:4rem auto;padding:0 1rem}h1{font-size:1.6rem}a.exo{display:block;padding:1rem;border:1px solid #ddd;border-radius:8px;margin:.5rem 0;text-decoration:none;color:#0366d6}a.exo:hover{background:#f6f8fa}</style></head><body>'
+            echo '<h1>Test reports</h1>'
+            echo '<a class="exo" href="./exercice_11/">exercice_11</a>'
+            echo '<a class="exo" href="./exercice_12/">exercice_12</a>'
+            echo '<a class="exo" href="./exercice_13/">exercice_13</a>'
+            echo '</body></html>'
+          } > site/index.html
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
