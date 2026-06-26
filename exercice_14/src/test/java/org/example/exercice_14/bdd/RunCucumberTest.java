@@ -14,6 +14,6 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "org.example.exercice_14.bdd")
 @ConfigurationParameter(
         key = PLUGIN_PROPERTY_NAME,
-        value = "pretty, html:target/cucumber-reports/cucumber.html, json:target/cucumber-reports/cucumber.json")
+        value = "pretty, html:target/site/cucumber/cucumber.html, json:target/site/cucumber/cucumber.json")
 public class RunCucumberTest {
 }
